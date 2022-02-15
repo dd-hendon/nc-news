@@ -1,4 +1,3 @@
-const res = require("express/lib/response");
 const { selectTopics } = require("../models/models.topics");
 
 exports.getTopics = async (req, res, next) => {
