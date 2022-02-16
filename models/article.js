@@ -1,5 +1,10 @@
 const db = require("../db/connection");
 
+exports.selectArticles = async () => {
+  const articles = await db.query("SELECT * FROM articles;");
+  return articles.rows;
+};
+
 exports.selectArticleById = async (id) => {
   const article = await db.query(
     "SELECT * FROM articles WHERE article_id = $1;",
