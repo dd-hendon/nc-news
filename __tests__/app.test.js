@@ -88,4 +88,64 @@ describe("app", () => {
         });
     });
   });
+  describe("PATCH /api/articles/:article_id", () => {
+    test("Status 200 - Responds with updated article with incremented votes", () => {
+      const articleUpdate = { inc_votes: 1 };
+      return request(app)
+        .patch("/api/articles/1")
+        .send(articleUpdate)
+        .expect(200)
+        .then(({ body: { article } }) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              article_id: 1,
+              title: "Living in the shadow of a great man",
+              topic: "mitch",
+              author: "butter_bridge",
+              body: "I find this existence challenging",
+              created_at: "2020-07-09T20:11:00.000Z",
+              votes: 101,
+            })
+          );
+        });
+    });
+    test("Status 200 - Responds with updated article with decremented votes", () => {
+      const articleUpdate = { inc_votes: -1 };
+      return request(app)
+        .patch("/api/articles/1")
+        .send(articleUpdate)
+        .expect(200)
+        .then(({ body: { article } }) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              article_id: 1,
+              title: "Living in the shadow of a great man",
+              topic: "mitch",
+              author: "butter_bridge",
+              body: "I find this existence challenging",
+              created_at: "2020-07-09T20:11:00.000Z",
+              votes: 99,
+            })
+          );
+        });
+    });
+    test("Status 400 - No inc_votes on request body", () => {
+      return request(app)
+        .patch("/api/articles/1")
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Missing required data");
+        });
+    });
+    test("Stataus 400 - Invalid input type of votes", () => {
+      const articleUpdate = { inc_votes: "string" };
+      return request(app)
+        .patch("/api/articles/1")
+        .send(articleUpdate)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid input");
+        });
+    });
+  });
 });
