@@ -137,7 +137,7 @@ describe("app", () => {
           expect(message).toBe("Missing required data");
         });
     });
-    test("Stataus 400 - Invalid input type of votes", () => {
+    test("Status 400 - Invalid input type of votes", () => {
       const articleUpdate = { inc_votes: "string" };
       return request(app)
         .patch("/api/articles/1")
@@ -145,6 +145,30 @@ describe("app", () => {
         .expect(400)
         .then(({ body: { message } }) => {
           expect(message).toBe("Invalid input");
+        });
+    });
+  });
+  describe("GET /api/users", () => {
+    test("Status 200 - Responds with an array of users of expected length", () => {
+      return request(app)
+        .get("/api/users")
+        .then(({ body: { users } }) => {
+          expect(users).toHaveLength(4);
+        });
+    });
+    test("Status 200 - Users have expected properties", () => {
+      return request(app)
+        .get("/api/users")
+        .then(({ body: { users } }) => {
+          users.forEach((user) => {
+            expect(user).toEqual(
+              expect.objectContaining({
+                username: expect.any(String),
+                name: expect.any(String),
+                avatar_url: expect.any(String),
+              })
+            );
+          });
         });
     });
   });
