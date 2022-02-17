@@ -228,6 +228,20 @@ describe("app", () => {
           expect(articles).toBeSortedBy("created_at", { descending: true });
         });
     });
+    test("Status 200 - Articles have comment_count property", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          articles.forEach((article) => {
+            expect(article).toEqual(
+              expect.objectContaining({
+                comment_count: expect.any(Number),
+              })
+            );
+          });
+        });
+    });
   });
   describe("GET /api/articles/article_id/comments", () => {
     test("Status 200 - Responds with an array of expected length for an article_id with comments", () => {
