@@ -67,6 +67,17 @@ describe("app", () => {
               body: "I find this existence challenging",
               created_at: "2020-07-09T20:11:00.000Z",
               votes: 100,
+            })
+          );
+        });
+    });
+    test("Status 200 - Selected article has correct comment_count properties and values", () => {
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then(({ body: { article } }) => {
+          expect(article).toEqual(
+            expect.objectContaining({
               comment_count: 11,
             })
           );
