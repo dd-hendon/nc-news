@@ -229,4 +229,56 @@ describe("app", () => {
         });
     });
   });
+  describe("GET /api/articles/article_id/comments", () => {
+    test("Status 200 - Responds with an array of expected length for an article_id with comments", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({ body: { comments } }) => {
+          expect(comments).toHaveLength(11);
+        });
+    });
+    test("Status 200 - Responds with an array with expected properties for an article_id with comments", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({ body: { comments } }) => {
+          comments.forEach((comment) => {
+            expect(comment).toEqual(
+              expect.objectContaining({
+                comment_id: expect.any(Number),
+                votes: expect.any(Number),
+                created_at: expect.any(String),
+                author: expect.any(String),
+                body: expect.any(String),
+              })
+            );
+          });
+        });
+    });
+    test("Status 200 - Responds with an empty array when article has no comments", () => {
+      return request(app)
+        .get("/api/articles/2/comments")
+        .expect(200)
+        .then(({ body: { comments } }) => {
+          expect(comments).toHaveLength(0);
+        });
+    });
+    test("Status 404 - Responds with a message if requested article does not exist", () => {
+      return request(app)
+        .get("/api/articles/77777/comments")
+        .expect(404)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Resource not found");
+        });
+    });
+    test("Status 400 - Responds with a message if input invalid", () => {
+      return request(app)
+        .get("/api/articles/invalidType/comments")
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid input");
+        });
+    });
+  });
 });
