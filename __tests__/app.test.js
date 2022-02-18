@@ -203,7 +203,7 @@ describe("app", () => {
         });
     });
   });
-  describe("GET /api/articles", () => {
+  describe.only("GET /api/articles", () => {
     test("Status 200 - Responds with an array of articles of expected length", () => {
       return request(app)
         .get("/api/articles")
@@ -261,6 +261,56 @@ describe("app", () => {
           expect(articles[0].comment_count).toEqual(2);
           expect(articles[5].comment_count).toEqual(11);
           expect(articles[11].comment_count).toEqual(0);
+        });
+    });
+    test("Status 200 - Accepts order query which when set to asc returns articles in ascending order", () => {
+      return request(app)
+        .get("/api/articles?order=asc")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeSortedBy("created_at", { descending: false });
+        });
+    });
+    test("Status 200 - Accepts sort query that returns array sorted by specified column", () => {
+      return request(app)
+        .get("/api/articles?sort_by=author")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles[0].author).toBe("rogersop");
+          expect(articles[11].author).toBe("butter_bridge");
+        });
+    });
+    test("Status 200 - Accepts topic query that filters array by topic", () => {
+      return request(app)
+        .get("/api/articles?topic=mitch")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toHaveLength(11);
+        });
+    });
+    test("Status 200 - Accepts all queries and returns an expected result", () => {
+      return request(app)
+        .get("/api/articles?sort_by=author&topic=mitch&order=asc")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toHaveLength(11);
+          expect(articles[0].author).toBe("butter_bridge");
+        });
+    });
+    test("Status 400 - Responds with message if sort parameter queries are invalid", () => {
+      return request(app)
+        .get("/api/articles?sort_by=autho")
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid sort query");
+        });
+    });
+    test("Status 400 - Responds with message if order parameter query values are invalid", () => {
+      return request(app)
+        .get("/api/articles?order=horizontal")
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid order query");
         });
     });
   });
