@@ -470,8 +470,7 @@ describe("app", () => {
         .expect(204)
         .then(() => {
           return connection.query(
-            "SELECT * FROM comments WHERE comment_id = $1",
-            [1]
+            "SELECT * FROM comments WHERE comment_id =1;"
           );
         })
         .then((comments) => {

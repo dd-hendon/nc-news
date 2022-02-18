@@ -20,5 +20,14 @@ exports.createComment = async (comment, id) => {
 };
 
 exports.removeComment = async (id) => {
-  await db.query("DELETE FROM comments WHERE comment_id=$1", [id]);
+  const deleted = await db.query(
+    "DELETE FROM comments WHERE comment_id=$1 RETURNING *",
+    [id]
+  );
+  if (deleted.rows[0] === undefined) {
+    return Promise.reject({
+      status: 404,
+      message: "Resource not found",
+    });
+  }
 };

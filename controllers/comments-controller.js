@@ -30,7 +30,6 @@ exports.postCommentToArticleId = async (req, res, next) => {
 exports.deleteCommentById = async (req, res, next) => {
   try {
     const id = req.params.comment_id;
-    await checkResourceExists("comments", "comment_id", [id]);
     await removeComment(id);
     res.status(204).send();
   } catch (err) {
