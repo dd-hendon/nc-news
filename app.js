@@ -9,6 +9,7 @@ const {
   postCommentToArticleId,
   deleteCommentById,
 } = require("./controllers/comments-controller");
+const { getEndpoints } = require("./controllers/endpoints-controller");
 const { getTopics } = require("./controllers/topics-controller");
 const { getUsers } = require("./controllers/users-controller");
 const {
@@ -20,6 +21,7 @@ const {
 const app = express();
 app.use(express.json());
 
+app.get("/api", getEndpoints);
 app.get("/api/topics", getTopics);
 app.get("/api/articles/:article_id", getArticleById);
 app.patch("/api/articles/:article_id", patchArticleById);

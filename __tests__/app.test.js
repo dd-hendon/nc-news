@@ -19,6 +19,28 @@ describe("app", () => {
         });
     });
   });
+  describe("GET /api", () => {
+    test("Status 200 - Responds with a JSON description of all endpoints", () => {
+      return request(app)
+        .get("/api")
+        .expect(200)
+        .then(({ body: { endpoints } }) => {
+          expect(endpoints).toEqual(
+            expect.objectContaining({
+              "GET /api": expect.any(Object),
+              "GET /api/topics": expect.any(Object),
+              "GET /api/users": expect.any(Object),
+              "GET /api/articles": expect.any(Object),
+              "GET /api/articles/:article_id": expect.any(Object),
+              "PATCH /api/articles/:article_id": expect.any(Object),
+              "GET /api/articles/:article_id/comments": expect.any(Object),
+              "POST /api/articles/:article_id/comments": expect.any(Object),
+              "DELETE /api/comments/:comment_id": expect.any(Object),
+            })
+          );
+        });
+    });
+  });
   describe("GET /api/topics", () => {
     test("Status 200 - Responds with an array of objects with expected length", () => {
       return request(app)
@@ -41,6 +63,143 @@ describe("app", () => {
               })
             );
           });
+        });
+    });
+  });
+  describe("GET /api/users", () => {
+    test("Status 200 - Responds with an array of users of expected length", () => {
+      return request(app)
+        .get("/api/users")
+        .then(({ body: { users } }) => {
+          expect(users).toHaveLength(4);
+        });
+    });
+    test("Status 200 - Users have expected properties", () => {
+      return request(app)
+        .get("/api/users")
+        .then(({ body: { users } }) => {
+          users.forEach((user) => {
+            expect(user).toEqual(
+              expect.objectContaining({
+                username: expect.any(String),
+                name: expect.any(String),
+                avatar_url: expect.any(String),
+              })
+            );
+          });
+        });
+    });
+  });
+  describe("GET /api/articles", () => {
+    test("Status 200 - Responds with an array of articles of expected length", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toHaveLength(12);
+        });
+    });
+    test("Status 200 - Articles have expected properties", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          articles.forEach((article) => {
+            expect(article).toEqual(
+              expect.objectContaining({
+                article_id: expect.any(Number),
+                title: expect.any(String),
+                topic: expect.any(String),
+                author: expect.any(String),
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+              })
+            );
+          });
+        });
+    });
+    test("Status 200 - Articles are sorted in descending date order", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeSortedBy("created_at", { descending: true });
+        });
+    });
+    test("Status 200 - Articles have comment_count property", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          articles.forEach((article) => {
+            expect(article).toEqual(
+              expect.objectContaining({
+                comment_count: expect.any(Number),
+              })
+            );
+          });
+        });
+    });
+    test("Status 200 - Articles have expected values", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles[0].comment_count).toEqual(2);
+          expect(articles[5].comment_count).toEqual(11);
+          expect(articles[11].comment_count).toEqual(0);
+        });
+    });
+    test("Status 200 - Accepts order query which when set to asc returns articles in ascending order", () => {
+      return request(app)
+        .get("/api/articles?order=asc")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeSortedBy("created_at", {
+            descending: false,
+          });
+        });
+    });
+    test("Status 200 - Accepts sort query that returns array sorted by specified column", () => {
+      return request(app)
+        .get("/api/articles?sort_by=author")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles[0].author).toBe("rogersop");
+          expect(articles[11].author).toBe("butter_bridge");
+        });
+    });
+    test("Status 200 - Accepts topic query that filters array by topic", () => {
+      return request(app)
+        .get("/api/articles?topic=mitch")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toHaveLength(11);
+        });
+    });
+    test("Status 200 - Accepts all queries and returns an expected result", () => {
+      return request(app)
+        .get("/api/articles?sort_by=author&topic=mitch&order=asc")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toHaveLength(11);
+          expect(articles[0].author).toBe("butter_bridge");
+        });
+    });
+    test("Status 400 - Responds with message if sort parameter queries are invalid", () => {
+      return request(app)
+        .get("/api/articles?sort_by=autho")
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid sort query");
+        });
+    });
+    test("Status 400 - Responds with message if order parameter query values are invalid", () => {
+      return request(app)
+        .get("/api/articles?order=horizontal")
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid order query");
         });
     });
   });
@@ -179,141 +338,6 @@ describe("app", () => {
         });
     });
   });
-  describe("GET /api/users", () => {
-    test("Status 200 - Responds with an array of users of expected length", () => {
-      return request(app)
-        .get("/api/users")
-        .then(({ body: { users } }) => {
-          expect(users).toHaveLength(4);
-        });
-    });
-    test("Status 200 - Users have expected properties", () => {
-      return request(app)
-        .get("/api/users")
-        .then(({ body: { users } }) => {
-          users.forEach((user) => {
-            expect(user).toEqual(
-              expect.objectContaining({
-                username: expect.any(String),
-                name: expect.any(String),
-                avatar_url: expect.any(String),
-              })
-            );
-          });
-        });
-    });
-  });
-  describe("GET /api/articles", () => {
-    test("Status 200 - Responds with an array of articles of expected length", () => {
-      return request(app)
-        .get("/api/articles")
-        .expect(200)
-        .then(({ body: { articles } }) => {
-          expect(articles).toHaveLength(12);
-        });
-    });
-    test("Status 200 - Articles have expected properties", () => {
-      return request(app)
-        .get("/api/articles")
-        .expect(200)
-        .then(({ body: { articles } }) => {
-          articles.forEach((article) => {
-            expect(article).toEqual(
-              expect.objectContaining({
-                article_id: expect.any(Number),
-                title: expect.any(String),
-                topic: expect.any(String),
-                author: expect.any(String),
-                created_at: expect.any(String),
-                votes: expect.any(Number),
-              })
-            );
-          });
-        });
-    });
-    test("Status 200 - Articles are sorted in descending date order", () => {
-      return request(app)
-        .get("/api/articles")
-        .expect(200)
-        .then(({ body: { articles } }) => {
-          expect(articles).toBeSortedBy("created_at", { descending: true });
-        });
-    });
-    test("Status 200 - Articles have comment_count property", () => {
-      return request(app)
-        .get("/api/articles")
-        .expect(200)
-        .then(({ body: { articles } }) => {
-          articles.forEach((article) => {
-            expect(article).toEqual(
-              expect.objectContaining({
-                comment_count: expect.any(Number),
-              })
-            );
-          });
-        });
-    });
-    test("Status 200 - Articles have expected values", () => {
-      return request(app)
-        .get("/api/articles")
-        .expect(200)
-        .then(({ body: { articles } }) => {
-          expect(articles[0].comment_count).toEqual(2);
-          expect(articles[5].comment_count).toEqual(11);
-          expect(articles[11].comment_count).toEqual(0);
-        });
-    });
-    test("Status 200 - Accepts order query which when set to asc returns articles in ascending order", () => {
-      return request(app)
-        .get("/api/articles?order=asc")
-        .expect(200)
-        .then(({ body: { articles } }) => {
-          expect(articles).toBeSortedBy("created_at", { descending: false });
-        });
-    });
-    test("Status 200 - Accepts sort query that returns array sorted by specified column", () => {
-      return request(app)
-        .get("/api/articles?sort_by=author")
-        .expect(200)
-        .then(({ body: { articles } }) => {
-          expect(articles[0].author).toBe("rogersop");
-          expect(articles[11].author).toBe("butter_bridge");
-        });
-    });
-    test("Status 200 - Accepts topic query that filters array by topic", () => {
-      return request(app)
-        .get("/api/articles?topic=mitch")
-        .expect(200)
-        .then(({ body: { articles } }) => {
-          expect(articles).toHaveLength(11);
-        });
-    });
-    test("Status 200 - Accepts all queries and returns an expected result", () => {
-      return request(app)
-        .get("/api/articles?sort_by=author&topic=mitch&order=asc")
-        .expect(200)
-        .then(({ body: { articles } }) => {
-          expect(articles).toHaveLength(11);
-          expect(articles[0].author).toBe("butter_bridge");
-        });
-    });
-    test("Status 400 - Responds with message if sort parameter queries are invalid", () => {
-      return request(app)
-        .get("/api/articles?sort_by=autho")
-        .expect(400)
-        .then(({ body: { message } }) => {
-          expect(message).toBe("Invalid sort query");
-        });
-    });
-    test("Status 400 - Responds with message if order parameter query values are invalid", () => {
-      return request(app)
-        .get("/api/articles?order=horizontal")
-        .expect(400)
-        .then(({ body: { message } }) => {
-          expect(message).toBe("Invalid order query");
-        });
-    });
-  });
   describe("GET /api/articles/article_id/comments", () => {
     test("Status 200 - Responds with an array of expected length for an article_id with comments", () => {
       return request(app)
@@ -368,7 +392,10 @@ describe("app", () => {
   });
   describe("POST /api/articles/article_id/comments", () => {
     test("Status 201 - Responds with the created comment", () => {
-      const newComment = { username: "lurker", body: "What is this internet?" };
+      const newComment = {
+        username: "lurker",
+        body: "What is this internet?",
+      };
       return request(app)
         .post("/api/articles/2/comments")
         .send(newComment)
@@ -387,7 +414,10 @@ describe("app", () => {
         });
     });
     test("Status 404 - Responds with message if article id does not exist", () => {
-      const newComment = { username: "lurker", body: "What is this internet?" };
+      const newComment = {
+        username: "lurker",
+        body: "What is this internet?",
+      };
       return request(app)
         .post("/api/articles/77777/comments")
         .send(newComment)
@@ -397,7 +427,10 @@ describe("app", () => {
         });
     });
     test("Status 400 - Responds with a message if invalid request parameter type", () => {
-      const newComment = { username: "lurker", body: "What is this internet?" };
+      const newComment = {
+        username: "lurker",
+        body: "What is this internet?",
+      };
       return request(app)
         .post("/api/articles/invalidParameterType/comments")
         .send(newComment)
