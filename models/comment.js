@@ -18,3 +18,7 @@ exports.createComment = async (comment, id) => {
   );
   return createdComment.rows[0];
 };
+
+exports.removeComment = async (id) => {
+  await db.query("DELETE FROM comments WHERE comment_id=$1", [id]);
+};
