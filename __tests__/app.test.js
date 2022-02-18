@@ -316,4 +316,68 @@ describe("app", () => {
         });
     });
   });
+  describe("POST /api/articles/article_id/comments", () => {
+    test("Status 201 - Responds with the created comment", () => {
+      const newComment = { username: "lurker", body: "What is this internet?" };
+      return request(app)
+        .post("/api/articles/2/comments")
+        .send(newComment)
+        .expect(201)
+        .then(({ body: { createdComment } }) => {
+          expect(createdComment).toEqual(
+            expect.objectContaining({
+              author: "lurker",
+              body: "What is this internet?",
+              article_id: 2,
+              comment_id: 19,
+              votes: 0,
+              created_at: expect.any(String),
+            })
+          );
+        });
+    });
+    test("Status 404 - Responds with message if article id does not exist", () => {
+      const newComment = { username: "lurker", body: "What is this internet?" };
+      return request(app)
+        .post("/api/articles/77777/comments")
+        .send(newComment)
+        .expect(404)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Related resource does not exist");
+        });
+    });
+    test("Status 400 - Responds with a message if invalid request parameter type", () => {
+      const newComment = { username: "lurker", body: "What is this internet?" };
+      return request(app)
+        .post("/api/articles/invalidParameterType/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid input");
+        });
+    });
+    test("Status 400 - Responds with a message if invalid request data", () => {
+      const newComment = {};
+      return request(app)
+        .post("/api/articles/2/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Missing required data");
+        });
+    });
+    test("Status 404 - Responds with a message if valid but non-existent username", () => {
+      const newComment = {
+        username: "nonexistentUser",
+        body: "What is this internet?",
+      };
+      return request(app)
+        .post("/api/articles/2/comments")
+        .send(newComment)
+        .expect(404)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Related resource does not exist");
+        });
+    });
+  });
 });

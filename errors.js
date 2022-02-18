@@ -11,6 +11,8 @@ exports.handlePsqlErrors = (err, req, res, next) => {
     res.status(400).send({ message: "Invalid input" });
   } else if (err.code === "23502") {
     res.status(400).send({ message: "Missing required data" });
+  } else if (err.code === "23503") {
+    res.status(404).send({ message: "Related resource does not exist" });
   } else {
     next(err);
   }
