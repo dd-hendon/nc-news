@@ -203,7 +203,7 @@ describe("app", () => {
         });
     });
   });
-  describe.only("GET /api/articles", () => {
+  describe("GET /api/articles", () => {
     test("Status 200 - Responds with an array of articles of expected length", () => {
       return request(app)
         .get("/api/articles")
@@ -427,6 +427,38 @@ describe("app", () => {
         .expect(404)
         .then(({ body: { message } }) => {
           expect(message).toBe("Related resource does not exist");
+        });
+    });
+  });
+  describe("DELETE /api/comments/:comment_id", () => {
+    test("Status 204 - Deletes a given comment", () => {
+      return request(app)
+        .delete("/api/comments/1")
+        .expect(204)
+        .then(() => {
+          return connection.query(
+            "SELECT * FROM comments WHERE comment_id = $1",
+            [1]
+          );
+        })
+        .then((comments) => {
+          expect(comments.rows[0]).toBe(undefined);
+        });
+    });
+    test("Status 404 - Comment does not exist", () => {
+      return request(app)
+        .delete("/api/comments/77777")
+        .expect(404)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Resource not found");
+        });
+    });
+    test("Status 400 - Invalid input", () => {
+      return request(app)
+        .delete("/api/comments/invalidDataType")
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Invalid input");
         });
     });
   });

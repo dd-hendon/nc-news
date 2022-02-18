@@ -1,6 +1,7 @@
 const {
   selectCommentsByArticleId,
   createComment,
+  removeComment,
 } = require("../models/comment");
 const { checkResourceExists } = require("../db/helpers/utils");
 
@@ -21,6 +22,17 @@ exports.postCommentToArticleId = async (req, res, next) => {
     const comment = req.body;
     const createdComment = await createComment(comment, id);
     res.status(201).send({ createdComment });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.deleteCommentById = async (req, res, next) => {
+  try {
+    const id = req.params.comment_id;
+    await checkResourceExists("comments", "comment_id", [id]);
+    await removeComment(id);
+    res.status(204).send();
   } catch (err) {
     next(err);
   }
