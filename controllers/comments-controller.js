@@ -19,7 +19,6 @@ exports.postCommentToArticleId = async (req, res, next) => {
   try {
     const id = req.params.article_id;
     const comment = req.body;
-    await checkResourceExists("articles", "article_id", [id]);
     const createdComment = await createComment(comment, id);
     res.status(201).send({ createdComment });
   } catch (err) {

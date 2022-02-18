@@ -343,7 +343,7 @@ describe("app", () => {
         .send(newComment)
         .expect(404)
         .then(({ body: { message } }) => {
-          expect(message).toBe("Resource not found");
+          expect(message).toBe("Related resource does not exist");
         });
     });
     test("Status 400 - Responds with a message if invalid request parameter type", () => {
@@ -364,6 +364,19 @@ describe("app", () => {
         .expect(400)
         .then(({ body: { message } }) => {
           expect(message).toBe("Missing required data");
+        });
+    });
+    test("Status 404 - Responds with a message if valid but non-existent username", () => {
+      const newComment = {
+        username: "nonexistentUser",
+        body: "What is this internet?",
+      };
+      return request(app)
+        .post("/api/articles/2/comments")
+        .send(newComment)
+        .expect(404)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("Related resource does not exist");
         });
     });
   });
