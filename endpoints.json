@@ -85,7 +85,7 @@
     }
   },
   "POST /api/articles/:article_id/comments": {
-    "description": "Serves an array of comments by article id",
+    "description": "Comments can be posted and associated with an article by id",
     "queries": [],
     "exampleRequest": {
       "username": "lurker",
