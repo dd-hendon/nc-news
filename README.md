@@ -1,4 +1,4 @@
-# Northcoders News API
+# NC News API
 
 ## Project Summary
 
