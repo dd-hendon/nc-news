@@ -55,4 +55,4 @@ In `.env.development` and `.env.test` respectively.
 
 ## Front End utilising this API
 - Deployed Site https://nc-news-dd-hendon.netlify.app/
-- Repo https://github.com/dd-hendon/nc-news.git
+- Repo https://github.com/dd-hendon/nc-news-front-end
