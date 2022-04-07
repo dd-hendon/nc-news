@@ -2,15 +2,16 @@
 
 ## Project Summary
 
-A basic reddit clone. Featuring topics, articles, users and comments. Consumers of the API can retrieve, post, edit and delete.
+The back end of basic reddit clone. Serves topics, articles, users and comments. Consumers of the API can retrieve, post, edit and delete.
 
 Current features:
 
 - Topics, users and articles can all be served as arrays
-- Articles can be served by their own id
+- Articles can be sorted and ordered with queries
+- Articles can be served by id
 - Articles can be updated with votes
 - Arrays of comments for each article can be served by article id
-- Comments can be served by their own id
+- Comments can be served by id
 - Comments can be created and must be associated with an article id
 - Comments can be deleted
 
