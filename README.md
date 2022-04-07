@@ -2,7 +2,7 @@
 
 ## Project Summary
 
-The back end of basic reddit clone. Serves topics, articles, users and comments. Consumers of the API can retrieve, post, edit and delete.
+The back end of a reddit style news aggregate website. Serves topics, articles, users and comments. Consumers of the API can retrieve, post, edit and delete.
 
 Current features:
 
