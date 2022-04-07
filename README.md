@@ -21,7 +21,10 @@ https://nc-news-ddhendon.herokuapp.com/api
 
 ## Clone and Install
 
-Clone the repository into a local folder. Make sure node is installed up to the required version. If unsure make use of `node -v`.
+Clone the repository into a local folder.
+` git clone https://github.com/dd-hendon/nc-news.git`
+
+Make sure node is installed up to the required version (see below). Make use of `node -v` if unsure of your current version.
 
 Run `npm i` to install all project and development dependencies.
 
@@ -49,3 +52,7 @@ In `.env.development` and `.env.test` respectively.
 - npm 8.4.0
 - node-postgres ^8.7.3
 - postgres 14.2
+
+## Front End utilising this API
+Deployed Site https://nc-news-dd-hendon.netlify.app/
+Repo https://github.com/dd-hendon/nc-news.git
