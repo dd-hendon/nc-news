@@ -22,7 +22,7 @@ https://nc-news-ddhendon.herokuapp.com/api
 ## Clone and Install
 
 Clone the repository into a local folder.
-` git clone https://github.com/dd-hendon/nc-news.git`
+` git clone https://github.com/dd-hendon/nc-news-back-end.git`
 
 Make sure node is installed up to the required version (see below). Make use of `node -v` if unsure of your current version.
 
