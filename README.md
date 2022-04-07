@@ -54,5 +54,5 @@ In `.env.development` and `.env.test` respectively.
 - postgres 14.2
 
 ## Front End utilising this API
-Deployed Site https://nc-news-dd-hendon.netlify.app/
-Repo https://github.com/dd-hendon/nc-news.git
+- Deployed Site https://nc-news-dd-hendon.netlify.app/
+- Repo https://github.com/dd-hendon/nc-news.git
