@@ -2,7 +2,7 @@
 
 ## Project Summary
 
-The back end of a news aggregate website. Serves topics, articles, users and comments. Consumers of the API can retrieve, post, edit and delete.
+The back end of a news aggregate website. Serves topics, articles, users and comments. Consumers of the API can retrieve, post, edit and delete data.
 
 Current features:
 
