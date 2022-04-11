@@ -34,17 +34,22 @@ To test the app use the included test suite (jest and supertest) by entering `np
 
 ## Local Environment Setup
 
-To connect to local versions of the databases create two files in the project root folder.
+This is to connect to local versions of the databases. 
+
+First find and make a note of the development and test database names in /db/setup.sql.
+
+Then create two files in the project root folder.
 
 - `.env.development`
 - `.env.test`
 
-The contents of these files should be set to:
+Set the contents of these files as follows, using the specific local database names found in setup.sql
 
+In `.env.development`:
 - PGDATABASE=_local development database_
-- PGDATABASE=_local test database_
 
-In `.env.development` and `.env.test` respectively.
+In `.env.test`:
+- PGDATABASE=_local test database_
 
 ## Version Requirements
 
