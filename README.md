@@ -17,7 +17,7 @@ Current features:
 
 ## Hosted Version
 
-https://nc-news-ddhendon.herokuapp.com/api
+~~https://nc-news-ddhendon.herokuapp.com/api~~ (Down due to Heroku removal of free tier)
 
 ## Clone and Install
 
@@ -59,5 +59,5 @@ In `.env.test`:
 - postgres 14.2
 
 ## Front End utilising this API
-- Deployed Site https://nc-news-dd-hendon.netlify.app/
+- Deployed Site ~~https://nc-news-dd-hendon.netlify.app/~~ (Down due to Heroku removal of free tier)
 - Repo https://github.com/dd-hendon/nc-news-front-end
